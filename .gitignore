@@ -1,0 +1,25 @@
+# scratch / reverse-engineering notes, all repo-root only
+/probe*.py
+/p6.py
+/poke.py
+/snap.py
+/ws.py
+/ws2.py
+/wscap.py
+/lib.py
+/e2e.py
+/srp.py
+/cognito.py
+/patch*.py
+/gen_cognito.py
+/gen_icon.py
+/frames.json
+/dump*.txt
+/wslog.txt
+
+__pycache__/
+*.pyc
+.venv/
+dist/
+
+.creds

@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AprilAire Healthy Air",
+        "description": "Sign in with the same email and password you use in the AprilAire Healthy Air app.",
+        "data": { "email": "Email", "password": "Password" }
+      },
+      "reauth_user": {
+        "title": "Reconnect to AprilAire",
+        "description": "AprilAire rejected the stored password for {email}.",
+        "data": { "email": "Email", "password": "Password" }
+      }
+    },
+    "error": {
+      "auth_failed": "AprilAire rejected those credentials.",
+      "cannot_connect": "Could not reach the AprilAire cloud.",
+      "no_devices": "No Healthy Air devices were found on this account."
+    },
+    "abort": {
+      "already_configured": "This AprilAire account is already configured.",
+      "reauth_successful": "Re-authentication succeeded."
+    }
+  }
+}
