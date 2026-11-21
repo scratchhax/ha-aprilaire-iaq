@@ -1,16 +1,14 @@
 {
   "domain": "aprilaire_iaq",
   "name": "AprilAire Healthy Air Monitor",
-  "version": "0.1.1",
-  "documentation": "https://github.com/scratchhax/ha-aprilaire-iaq",
-  "issue_tracker": "https://github.com/scratchhax/ha-aprilaire-iaq/issues",
-  "codeowners": [
-    "scratchhax"
-  ],
+  "after_dependencies": [],
+  "codeowners": [],
   "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/scratchhax/ha-aprilaire-iaq",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
-  "dependencies": [],
-  "after_dependencies": [],
-  "requirements": []
+  "issue_tracker": "https://github.com/scratchhax/ha-aprilaire-iaq/issues",
+  "requirements": [],
+  "version": "0.1.1"
 }
