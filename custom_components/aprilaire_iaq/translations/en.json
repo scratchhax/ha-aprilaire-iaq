@@ -4,12 +4,22 @@
       "user": {
         "title": "AprilAire Healthy Air",
         "description": "Sign in with the same email and password you use in the AprilAire Healthy Air app.",
-        "data": { "email": "Email", "password": "Password" }
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "scan_interval": "Poll interval (seconds)"
+        },
+        "data_description": {
+          "scan_interval": "The monitor only reports every few minutes, so 300 is plenty. 30-3600 allowed."
+        }
       },
       "reauth_user": {
         "title": "Reconnect to AprilAire",
         "description": "AprilAire rejected the stored password for {email}.",
-        "data": { "email": "Email", "password": "Password" }
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
       }
     },
     "error": {
@@ -20,6 +30,19 @@
     "abort": {
       "already_configured": "This AprilAire account is already configured.",
       "reauth_successful": "Re-authentication succeeded."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "AprilAire Healthy Air options",
+        "data": {
+          "scan_interval": "Poll interval (seconds)"
+        },
+        "data_description": {
+          "scan_interval": "Each poll opens a new websocket to AprilAire. 300 s is the default; the device itself reports every few minutes."
+        }
+      }
     }
   }
 }

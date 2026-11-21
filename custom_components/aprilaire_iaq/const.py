@@ -8,8 +8,11 @@ WS_URL = "wss://socket.aprilaire.io/"
 
 CONF_EMAIL = "email"
 CONF_PASSWORD = "password"
+CONF_SCAN_INTERVAL = "scan_interval"
 
-DEFAULT_INTERVAL = 60
+DEFAULT_INTERVAL = 300
+MIN_INTERVAL = 30
+MAX_INTERVAL = 3600
 WS_TIMEOUT = 40
 
 # measurement id -> (key, device_class hint, unit)

@@ -40,9 +40,11 @@ with HA, and the Cognito SRP math is implemented with the standard library only.
 Each reading carries `air_quality`, `air_quality_code` and `sensor_status`
 attributes; the air-quality sensor carries `reported_at` and `diagnostic_codes`.
 
-The device reports roughly every 1–5 minutes; the integration opens the
-subscription socket once every 60 seconds, reads the snapshot the cloud sends
-immediately after `subscribe`, then hangs up. Expiry of the Cognito token is
+The device reports roughly every 1–5 minutes, so the default poll interval is
+**300 seconds**: each poll opens a fresh subscription socket, reads the snapshot
+the cloud sends immediately after `subscribe`, then hangs up. Change it under
+the integration's **Configure** dialog (30–3600 s) — it takes effect immediately,
+no restart. Set it low only if you are debugging; there is no faster data to get. Expiry of the Cognito token is
 handled by refresh; a rejected password raises a re-auth flow in the UI.
 
 ## Limits

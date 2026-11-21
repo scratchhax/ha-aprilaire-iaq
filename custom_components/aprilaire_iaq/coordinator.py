@@ -12,9 +12,25 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import AprilAireAuthError, AprilAireCloud, AprilAireUnavailable
-from .const import CONF_EMAIL, CONF_PASSWORD, DEFAULT_INTERVAL, DOMAIN
+from .const import (
+    CONF_EMAIL,
+    CONF_PASSWORD,
+    CONF_SCAN_INTERVAL,
+    DEFAULT_INTERVAL,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def scan_interval(entry: ConfigEntry) -> int:
+    """Interval in seconds: options win over the entry data."""
+    for source in (entry.options, entry.data):
+        value = source.get(CONF_SCAN_INTERVAL)
+        if value:
+            return int(value)
+    return DEFAULT_INTERVAL
+
 
 
 class AprilAireCoordinator(DataUpdateCoordinator[dict[str, dict]]):
@@ -29,7 +45,7 @@ class AprilAireCoordinator(DataUpdateCoordinator[dict[str, dict]]):
             *args,
             **({} if new_style else {"config_entry": entry}),
             name=DOMAIN,
-            update_interval=timedelta(seconds=DEFAULT_INTERVAL),
+            update_interval=timedelta(seconds=scan_interval(entry)),
         )
         # trust_env=False: never let HTTP(S)_PROXY silently hijack the websocket.
         self.session = aiohttp.ClientSession(trust_env=False)
