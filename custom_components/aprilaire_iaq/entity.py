@@ -1,6 +1,8 @@
 """Base entity for AprilAire Healthy Air devices."""
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -27,6 +29,36 @@ class AprilAireEntity(CoordinatorEntity[AprilAireCoordinator]):
     @property
     def available(self) -> bool:
         return super().available and bool(self._device)
+
+    @property
+    def sample_time(self) -> datetime | None:
+        """When the monitor actually sampled this data, per its own stamp."""
+        raw = self._device.get("as_of")
+        if not raw:
+            return None
+        try:
+            stamp = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        if stamp.tzinfo is None:
+            stamp = stamp.replace(tzinfo=timezone.utc)
+        return stamp
+
+    @property
+    def sample_age_seconds(self) -> int | None:
+        """How stale the reading is. HA's own last_updated is when we polled,
+        which can be minutes newer than the data underneath it."""
+        stamp = self.sample_time
+        if stamp is None:
+            return None
+        return max(0, int((datetime.now(timezone.utc) - stamp).total_seconds()))
+
+    def sample_attributes(self) -> dict:
+        stamp = self.sample_time
+        return {
+            "sample_ts": stamp.isoformat() if stamp else None,
+            "sample_age_seconds": self.sample_age_seconds,
+        }
 
     @property
     def device_info(self) -> DeviceInfo:

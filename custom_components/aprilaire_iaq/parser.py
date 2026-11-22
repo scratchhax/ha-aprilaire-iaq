@@ -17,7 +17,8 @@ def _blank(device_id: str) -> dict:
         "measurements": {},   # key -> {value, unit, label, status, state}
         "iaq_state": None,
         "iaq_state_code": None,
-        "as_of": None,
+        "as_of": None,        # when the readings were sampled (status frames)
+        "config_as_of": None,  # when settings/setup last changed - not freshness
     }
 
 
@@ -36,8 +37,16 @@ def parse_batch(batch: list) -> dict[str, dict]:
         if not did:
             continue
         d = dev(did)
-        if msg.get("asOf"):
-            d["as_of"] = msg["asOf"]
+        # DeviceSetup/DeviceSettings/DeviceStatus also carry `asOf`, but that is
+        # "when the config last changed" (it can be days old). Only the status
+        # frames mean "when was this data sampled".
+        as_of = msg.get("asOf")
+        if as_of:
+            if mtype in ("SensorHubStatus", "IaqMonitorStatus"):
+                if not d["as_of"] or str(as_of) > str(d["as_of"]):
+                    d["as_of"] = as_of
+            elif not d["config_as_of"] or str(as_of) > str(d["config_as_of"]):
+                d["config_as_of"] = as_of
 
         if mtype == "DeviceSetup":
             hub = msg.get("sensorHub") or {}

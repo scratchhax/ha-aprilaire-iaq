@@ -46,6 +46,7 @@ mod("homeassistant.exceptions", ConfigEntryAuthFailed=ConfigEntryAuthFailed)
 mod("homeassistant.helpers")
 mod("homeassistant.helpers.update_coordinator", DataUpdateCoordinator=DataUpdateCoordinator,
     UpdateFailed=UpdateFailed, CoordinatorEntity=CoordinatorEntity)
+mod("homeassistant.helpers.entity", EntityCategory=_Enum())
 mod("homeassistant.helpers.device_registry", CONNECTION_NETWORK_MAC="mac",
     DeviceInfo=dict, format_mac=lambda s: s)
 mod("homeassistant.helpers.entity_platform", AddEntitiesCallback=object)

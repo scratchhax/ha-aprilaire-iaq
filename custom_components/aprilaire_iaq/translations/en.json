@@ -10,7 +10,7 @@
           "scan_interval": "Poll interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "The monitor only reports every few minutes, so 300 is plenty. 30-3600 allowed."
+          "scan_interval": "The monitor publishes roughly every 298 s, so 240 keeps every sample without extra load. 30-3600 allowed."
         }
       },
       "reauth_user": {
@@ -40,7 +40,7 @@
           "scan_interval": "Poll interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "Each poll opens a new websocket to AprilAire. 300 s is the default; the device itself reports every few minutes."
+          "scan_interval": "Each poll opens a new websocket to AprilAire. Default 240 s: the device publishes every ~298 s, so polling slower than that means occasionally skipping a sample outright."
         }
       }
     }

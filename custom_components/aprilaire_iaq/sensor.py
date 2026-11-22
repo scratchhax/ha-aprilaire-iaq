@@ -13,6 +13,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -61,6 +62,7 @@ async def async_setup_entry(
         entities.extend(AprilAireMeasurementSensor(coordinator, device_id, key) for key in MEASUREMENT_META)
         entities.append(AprilAireAirQualitySensor(coordinator, device_id))
         entities.append(AprilAireWifiSensor(coordinator, device_id))
+        entities.append(AprilAireLastSampleSensor(coordinator, device_id))
     async_add_entities(entities)
 
 
@@ -102,6 +104,7 @@ class AprilAireMeasurementSensor(AprilAireEntity, SensorEntity):
             "air_quality": data.get("state"),
             "air_quality_code": data.get("state_code"),
             "sensor_status": data.get("status"),
+            **self.sample_attributes(),
         }
 
 
@@ -127,6 +130,7 @@ class AprilAireAirQualitySensor(AprilAireEntity, SensorEntity):
             "state_code": self._device.get("iaq_state_code"),
             "reported_at": self._device.get("as_of"),
             "diagnostic_codes": self._device.get("diag") or [],
+            **self.sample_attributes(),
         }
 
 
@@ -147,3 +151,30 @@ class AprilAireWifiSensor(AprilAireEntity, SensorEntity):
     def native_value(self) -> float | None:
         rssi = self._device.get("rssi")
         return None if rssi is None else float(rssi)
+
+
+class AprilAireLastSampleSensor(AprilAireEntity, SensorEntity):
+    """Seconds since the monitor last published a reading.
+
+    The cloud is pull-only, so this is the entity to alert on if the device
+    stops checking in - HA's last_updated only tracks our polling.
+    """
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_registry_enabled_default = False
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "s"
+    _attr_icon = "mdi:clock-outline"
+
+    def __init__(self, coordinator: AprilAireCoordinator, device_id: str) -> None:
+        super().__init__(coordinator, device_id, "sample_age")
+        self._attr_name = "Last sample age"
+
+    @property
+    def native_value(self) -> int | None:
+        return self.sample_age_seconds
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"sample_ts": self._device.get("as_of"),
+                "config_as_of": self._device.get("config_as_of")}

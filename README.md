@@ -41,10 +41,21 @@ Each reading carries `air_quality`, `air_quality_code` and `sensor_status`
 attributes; the air-quality sensor carries `reported_at` and `diagnostic_codes`.
 
 The device reports roughly every 1–5 minutes, so the default poll interval is
-**300 seconds**: each poll opens a fresh subscription socket, reads the snapshot
-the cloud sends immediately after `subscribe`, then hangs up. Change it under
-the integration's **Configure** dialog (30–3600 s) — it takes effect immediately,
-no restart. Set it low only if you are debugging; there is no faster data to get. Expiry of the Cognito token is
+**240 seconds**: each poll opens a fresh subscription socket, reads the snapshot
+the cloud sends immediately after `subscribe`, then hangs up.
+
+The device publishes on a **~298 s** cadence (measured: consecutive samples
+stamped 298.5 s apart) and one poll returns exactly one value per channel — no
+time window, no averaging. Polling *slower* than the publish interval makes the
+two beat against each other and you silently drop a sample now and then, which
+is why the default is 240 and not 300. Change it in the integration's
+**Configure** dialog (30–3600 s); it applies without a restart. Polling faster
+than the device only buys a fresher timestamp on the same number.
+
+Every entity carries `sample_ts` and `sample_age_seconds`, because HA's
+`last_updated` records when *we polled*, not when the monitor sampled — those
+can be minutes apart. A **Last sample age** diagnostic sensor (disabled by
+default) is there if you want to alert on the device stopping its check-ins. Expiry of the Cognito token is
 handled by refresh; a rejected password raises a re-auth flow in the UI.
 
 ## Limits
